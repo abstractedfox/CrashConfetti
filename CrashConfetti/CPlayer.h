@@ -1,13 +1,31 @@
 #pragma once
 
-#include <iostream>
-#include <Windows.h>
-#include <mfobjects.h>
+
+#include <mfidl.h> //maybe this will fix linker errors
 #include <mfapi.h>
+
+#include <Windows.h>
+
+//these two are for message boxes for debugging
+#include <iostream>
+#include <winuser.h>
+
+#include <mfobjects.h>
+
 #include <assert.h>
 #include <mfidl.h>
+#include <mferror.h>
 
-UINT WM_APP_PLAYER_EVENT = WM_APP + 1;
+#include <Shlwapi.h>
+#include <evr.h>
+
+//extra includes idk
+#include <ShObjIdl.h>
+#include <strsafe.h>
+#include "resource.h"
+#include <new>
+
+const UINT WM_APP_PLAYER_EVENT = WM_APP + 1; //linker got angy when this wasn't const so now it's const
 
 enum PlayerState
 {
@@ -58,6 +76,7 @@ public:
     HRESULT Repaint();
     HRESULT ResizeVideo(WORD width, WORD height);
     BOOL HasVideo() const { return (m_pVideoDisplay != NULL); }
+
 
 
 protected:
