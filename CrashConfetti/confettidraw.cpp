@@ -12,6 +12,7 @@ void UpdateUI(HWND hwnd, PlayerState state);
 void OnPaint(HWND hwnd);
 void paintWindowTransparent(HWND hwnd);
 void OnPlayerEvent(HWND hwnd, WPARAM pUnkPtr);
+LRESULT OnCreateWindow(HWND hwnd);
 
 HINSTANCE g_hInstance; //from cplayer example "current instance"
 BOOL g_bRepaintClient = TRUE; //from cplayer example; "repaint the client application area?"
@@ -57,7 +58,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	ShowWindow(hwnd, nCmdShow);
 	UpdateWindow(hwnd);
 
-	openVideo(hwnd);
 
 	MSG message = {};
 	//GetMessage always returns > 0 unless the program is exiting, breaking the loop
@@ -66,29 +66,34 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 		DispatchMessage(&message);
 	}
 
+	openVideo(hwnd);
 	return 573;
 }
 
 //DispatchMessage causes the OS to call WindowProc
 LRESULT	CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	switch (uMsg) {
-		case WM_DESTROY:
-			PostQuitMessage(0); //causes the next GetMessage call to return 0
-			return 0;
+		//asdf
+	case WM_CREATE:
+		return OnCreateWindow(hwnd);
 
-		case WM_PAINT:
-			OnPaint(hwnd);
-			break;
+	case WM_DESTROY:
+		PostQuitMessage(0); //causes the next GetMessage call to return 0
+		return 0;
 
-		case WM_APP_PLAYER_EVENT:
-			OnPlayerEvent(hwnd, wParam);
-			break;
+	case WM_PAINT:
+		OnPaint(hwnd);
+		break;
 
-		case WM_ERASEBKGND:
-			// Suppress window erasing, to reduce flickering while the video is playing.
-			return 1;
+	case WM_APP_PLAYER_EVENT:
+		OnPlayerEvent(hwnd, wParam);
+		break;
 
-		return -1;
+	case WM_ERASEBKGND:
+		// Suppress window erasing, to reduce flickering while the video is playing.
+		return 1;
+
+	return -1;
 	}
 
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -166,14 +171,17 @@ void OnPaint(HWND hwnd) {
 }
 
 void openVideo(HWND hwnd) {
+	
 	HRESULT hr;
+	/* asdf
 	hr = CPlayer::CreateInstance(hwnd, hwnd, &g_pPlayer); //initialize the player
 	if (FAILED(hr)) {
 		MessageBox(NULL, L"CPlayer::CreateInstance failed!!!", L"main::openVideo", MB_OK);
 	}
 	if (SUCCEEDED(hr)) {
-		UpdateUI(hwnd, Closed);
-	}
+		MessageBox(NULL, L"CPlayer::CreateInstance worked!!!", L"main::openVideo", MB_OK);
+		//UpdateUI(hwnd, Closed);
+	}*/
 	
 	
 	hr = g_pPlayer->OpenURL(videoPath.c_str());
@@ -184,6 +192,8 @@ void openVideo(HWND hwnd) {
 	if (SUCCEEDED(hr)) {
 		MessageBox(NULL, L"g_pPlayer->OpenURL HUGE SUCCESS!!!", L"main::openVideo", MB_OK);
 		UpdateUI(hwnd, OpenPending);
+		//MSG message = { hwnd, WM_APP_PLAYER_EVENT, 0, 0, GetMessageTime(), {0,0} };
+		//DispatchMessage(&message);
 
 	}
 
@@ -222,6 +232,21 @@ void OnPlayerEvent(HWND hwnd, WPARAM pUnkPtr)
 		MessageBox(NULL, L"g_pPlayer->HandleEvent The badness!!!", L"main::OnPlayerEvent", MB_OK);
 	}
 	UpdateUI(hwnd, g_pPlayer->GetState());
+}
+
+//asdf
+LRESULT OnCreateWindow(HWND hwnd) {
+	HRESULT hr;
+	hr = CPlayer::CreateInstance(hwnd, hwnd, &g_pPlayer); //initialize the player
+	if (SUCCEEDED(hr)) {
+		MessageBox(NULL, L"CPlayer::CreateInstance worked!!!", L"main::OnCreateWindow", MB_OK);
+		//UpdateUI(hwnd, Closed);
+		return 0;
+	}
+	else {
+		MessageBox(NULL, L"CPlayer::CreateInstance failed!!!", L"main::OnCreateWindow", MB_OK);
+		//return -1;
+	}
 }
 
 
