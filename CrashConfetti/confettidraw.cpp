@@ -41,7 +41,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 }
 
 int Initialize(HINSTANCE hInstance, int nCmdShow) {
-	const wchar_t CLASS_NAME[] = L"It's time for motherfucking confetti";
+	const wchar_t CLASS_NAME[] = L"It's time for mf confetti";
 
 	WNDCLASS windowclass = { };
 
