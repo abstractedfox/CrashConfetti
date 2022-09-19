@@ -137,7 +137,7 @@ HRESULT CPlayer::OpenURL(const WCHAR* sURL) {
 	// 3. Create the topology.
 	// 4. Queue the topology [asynchronous]
 	// 5. Start playback [asynchronous - does not happen in this method.]
-	const bool debug = true;
+	const bool debug = false;
 	const std::wstring debugName = L"CPlayer::OpenURL";
 
 	IMFTopology* pTopology = NULL;
@@ -360,7 +360,7 @@ done:
 }
 
 HRESULT CPlayer::HandleEvent(UINT_PTR pEventPtr) {
-	const bool debug = true;
+	const bool debug = false;
 	std::wstring debugString = L"";
 
 	HRESULT hrStatus = S_OK;
@@ -469,7 +469,7 @@ done:
 }
 
 HRESULT CPlayer::StartPlayback() {
-	const bool debug = true;
+	const bool debug = false;
 	assert(m_pSession != NULL);
 
 	if (debug) {

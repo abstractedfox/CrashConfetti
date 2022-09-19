@@ -21,7 +21,7 @@ HINSTANCE g_hInstance; //from cplayer example "current instance"
 BOOL g_bRepaintClient = TRUE; //from cplayer example; "repaint the client application area?"
 CPlayer* g_pPlayer = NULL;
 
-const std::wstring videoPath = L"C:\\Users\\coldc\\Documents\\miscfiles\\rat.mp4";
+const std::wstring videoPath = L"";
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
 	Initialize(hInstance, nCmdShow);
@@ -72,7 +72,7 @@ int Initialize(HINSTANCE hInstance, int nCmdShow) {
 
 	g_hInstance = hInstance; //this is for the video playback
 
-	COLORREF basecolor = 0x00FF0000; //last 3 bytes are bbggrr; first is always 00
+	COLORREF basecolor = 0x00000000; //last 3 bytes are bbggrr; first is always 00
 
 	bool didTransparencyWork = SetLayeredWindowAttributes(hwnd, basecolor, 80, LWA_COLORKEY); //3rd arg is alpha
 
@@ -141,7 +141,7 @@ LRESULT	CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 		break;
 
 	case WM_APP_PLAYER_EVENT:
-		MessageBox(NULL, L"WM_APP_PLAYER_EVENT has been reached", L"main::WindowProc", MB_OK);
+		//MessageBox(NULL, L"WM_APP_PLAYER_EVENT has been reached", L"main::WindowProc", MB_OK);
 		OnPlayerEvent(hwnd, wParam);
 		break;
 
@@ -227,7 +227,7 @@ void OnPaint(HWND hwnd) {
 }
 
 void openVideo(HWND hwnd) {
-	const bool debug = true;
+	const bool debug = false;
 	HRESULT hr;
 	/* asdf
 	hr = CPlayer::CreateInstance(hwnd, hwnd, &g_pPlayer); //initialize the player
@@ -308,13 +308,13 @@ LRESULT OnCreateWindow(HWND hwnd) {
 	HRESULT hr;
 	hr = CPlayer::CreateInstance(hwnd, hwnd, &g_pPlayer); //initialize the player
 	if (SUCCEEDED(hr)) {
-		MessageBox(NULL, L"CPlayer::CreateInstance worked!!!", L"main::OnCreateWindow", MB_OK);
+		//MessageBox(NULL, L"CPlayer::CreateInstance worked!!!", L"main::OnCreateWindow", MB_OK);
 		//UpdateUI(hwnd, Closed);
 		openVideo(hwnd);
 		return 0;
 	}
 	else {
-		MessageBox(NULL, L"CPlayer::CreateInstance failed!!!", L"main::OnCreateWindow", MB_OK);
+		//MessageBox(NULL, L"CPlayer::CreateInstance failed!!!", L"main::OnCreateWindow", MB_OK);
 		//return -1;
 	}
 }
