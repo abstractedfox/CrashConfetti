@@ -15,13 +15,12 @@ void paintWindowTransparent(HWND hwnd);
 void OnPlayerEvent(HWND hwnd, WPARAM pUnkPtr);
 LRESULT OnCreateWindow(HWND hwnd);
 int Initialize(HINSTANCE hInstance, int nCmdShow);
-int Initialize2(HINSTANCE hInstance, int nCmdShow);
 
 HINSTANCE g_hInstance; //from cplayer example "current instance"
 BOOL g_bRepaintClient = TRUE; //from cplayer example; "repaint the client application area?"
 CPlayer* g_pPlayer = NULL;
 
-const std::wstring videoPath = L"";
+const std::wstring videoPath = L"C:\\Users\\coldc\\Documents\\miscfiles\\apple.mp4";
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
 	Initialize(hInstance, nCmdShow);
@@ -85,45 +84,6 @@ int Initialize(HINSTANCE hInstance, int nCmdShow) {
 	return 0;
 }
 
-int Initialize2(HINSTANCE hInst, int nCmdShow) {
-
-	PCWSTR szTitle = L"BasicPlayback";
-	PCWSTR szWindowClass = L"MFBASICPLAYBACK";
-	HWND hwnd;
-	WNDCLASSEX wcex;
-
-	g_hInstance = hInst; // Store the instance handle.
-
-	// Register the window class.
-	ZeroMemory(&wcex, sizeof(WNDCLASSEX));
-	wcex.cbSize = sizeof(WNDCLASSEX);
-	wcex.style = CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc = WindowProc;
-	wcex.hInstance = hInst;
-	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-	wcex.lpszMenuName = MAKEINTRESOURCE(IDC_MFPLAYBACK);
-	wcex.lpszClassName = szWindowClass;
-
-	if (RegisterClassEx(&wcex) == 0)
-	{
-		return FALSE;
-	}
-
-	// Create the application window.
-	hwnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInst, NULL);
-
-	if (hwnd == 0)
-	{
-		return FALSE;
-	}
-
-	ShowWindow(hwnd, nCmdShow);
-	//UpdateWindow(hwnd);
-
-	//openVideo(hwnd);
-	return 0;
-}
 
 //DispatchMessage causes the OS to call WindowProc
 LRESULT	CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
