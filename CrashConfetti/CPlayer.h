@@ -5,6 +5,7 @@
 #include <mfapi.h>
 
 #include <Windows.h>
+#include <string>
 
 //these two are for message boxes for debugging
 #include <iostream>
