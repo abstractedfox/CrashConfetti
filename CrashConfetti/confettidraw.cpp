@@ -19,13 +19,13 @@ int Initialize2(HINSTANCE hInstance, int nCmdShow);
 
 HINSTANCE g_hInstance; //from cplayer example "current instance"
 BOOL g_bRepaintClient = TRUE; //from cplayer example; "repaint the client application area?"
-CPlayer *g_pPlayer = NULL;
+CPlayer* g_pPlayer = NULL;
 
-const std::wstring videoPath = L"C:\\Users\\coldc\\Documents\\miscfiles\\rat.mp4";
+const std::wstring videoPath = L"";
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
 	Initialize(hInstance, nCmdShow);
-	
+
 
 
 
@@ -41,7 +41,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 }
 
 int Initialize(HINSTANCE hInstance, int nCmdShow) {
-	const wchar_t CLASS_NAME[] = L"It's time for motherfucking confetti";
+	const wchar_t CLASS_NAME[] = L"It's time for mf confetti";
 
 	WNDCLASS windowclass = { };
 
@@ -72,7 +72,7 @@ int Initialize(HINSTANCE hInstance, int nCmdShow) {
 
 	g_hInstance = hInstance; //this is for the video playback
 
-	COLORREF basecolor = 0x00FF0000; //last 3 bytes are bbggrr; first is always 00
+	COLORREF basecolor = 0x00000000; //last 3 bytes are bbggrr; first is always 00
 
 	bool didTransparencyWork = SetLayeredWindowAttributes(hwnd, basecolor, 80, LWA_COLORKEY); //3rd arg is alpha
 
@@ -141,7 +141,7 @@ LRESULT	CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 		break;
 
 	case WM_APP_PLAYER_EVENT:
-		MessageBox(NULL, L"WM_APP_PLAYER_EVENT has been reached", L"main::WindowProc", MB_OK);
+		//MessageBox(NULL, L"WM_APP_PLAYER_EVENT has been reached", L"main::WindowProc", MB_OK);
 		OnPlayerEvent(hwnd, wParam);
 		break;
 
@@ -149,7 +149,7 @@ LRESULT	CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 		// Suppress window erasing, to reduce flickering while the video is playing.
 		return 1;
 
-	return -1;
+		return -1;
 	}
 
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -183,7 +183,7 @@ void drawImage(HDC hdc) {
 	//graphics.DrawImage(&image, 50, 50);
 }
 
-void drawTest(HWND &hwnd) {
+void drawTest(HWND& hwnd) {
 	HDC hdc;
 	hdc = GetDC(hwnd);
 	//SelectObject(hdc, )
@@ -193,10 +193,10 @@ void drawTest(HWND &hwnd) {
 	LineTo(hdc, 15, 30);
 
 	COLORREF fontcolor = 0x000000ff, alpha = 0x00ff0000;
-	
+
 	SetTextColor(hdc, fontcolor);
 	SetBkColor(hdc, alpha);
-	
+
 
 	RECT textrect;
 	textrect.left = 30;
@@ -227,7 +227,7 @@ void OnPaint(HWND hwnd) {
 }
 
 void openVideo(HWND hwnd) {
-	const bool debug = true;
+	const bool debug = false;
 	HRESULT hr;
 	/* asdf
 	hr = CPlayer::CreateInstance(hwnd, hwnd, &g_pPlayer); //initialize the player
@@ -238,10 +238,10 @@ void openVideo(HWND hwnd) {
 		MessageBox(NULL, L"CPlayer::CreateInstance worked!!!", L"main::openVideo", MB_OK);
 		//UpdateUI(hwnd, Closed);
 	}*/
-	
-	
+
+
 	hr = g_pPlayer->OpenURL(videoPath.c_str());
-	
+
 
 	if (FAILED(hr)) {
 		MessageBox(NULL, L"g_pPlayer->OpenURL failed!!!", L"main::openVideo", MB_OK);
@@ -257,7 +257,7 @@ void openVideo(HWND hwnd) {
 			}
 		}
 		UpdateUI(hwnd, OpenPending);
-		
+
 		//MSG message = { hwnd, WM_APP_PLAYER_EVENT, 0, 0, GetMessageTime(), {0,0} };
 		//DispatchMessage(&message);
 
@@ -295,11 +295,11 @@ void OnPlayerEvent(HWND hwnd, WPARAM pUnkPtr)
 	HRESULT hr = g_pPlayer->HandleEvent(pUnkPtr);
 	if (FAILED(hr))
 	{
-		
+
 		MessageBox(NULL, L"g_pPlayer->HandleEvent The badness!!!", L"main::OnPlayerEvent", MB_OK);
 	}
 	UpdateUI(hwnd, g_pPlayer->GetState());
-	
+
 }
 
 
@@ -308,13 +308,13 @@ LRESULT OnCreateWindow(HWND hwnd) {
 	HRESULT hr;
 	hr = CPlayer::CreateInstance(hwnd, hwnd, &g_pPlayer); //initialize the player
 	if (SUCCEEDED(hr)) {
-		MessageBox(NULL, L"CPlayer::CreateInstance worked!!!", L"main::OnCreateWindow", MB_OK);
+		//MessageBox(NULL, L"CPlayer::CreateInstance worked!!!", L"main::OnCreateWindow", MB_OK);
 		//UpdateUI(hwnd, Closed);
 		openVideo(hwnd);
 		return 0;
 	}
 	else {
-		MessageBox(NULL, L"CPlayer::CreateInstance failed!!!", L"main::OnCreateWindow", MB_OK);
+		//MessageBox(NULL, L"CPlayer::CreateInstance failed!!!", L"main::OnCreateWindow", MB_OK);
 		//return -1;
 	}
 }
