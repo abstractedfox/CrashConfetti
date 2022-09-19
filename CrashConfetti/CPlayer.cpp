@@ -307,6 +307,9 @@ HRESULT CreateMediaSinkActivate(
 	else hr = E_FAIL;
 	if (FAILED(hr)) goto done;
 
+	*ppActivate = pActivate;
+	(*ppActivate)->AddRef();
+
 done:
 	SafeRelease(&pHandler);
 	SafeRelease(&pActivate);
@@ -387,7 +390,7 @@ HRESULT CPlayer::HandleEvent(UINT_PTR pEventPtr) {
 	hr = pEvent->GetStatus(&hrStatus);
 	if (SUCCEEDED(hr) && FAILED(hrStatus)) hr = hrStatus;
 	if (FAILED(hr)) {
-		std::wstring error = L"Conditional (SUCCEEDED(hr) && FAILED(hrStatus) not met. HRESULT hr = " + std::to_wstring(hr) + L" hrStatus = " + std::to_wstring(hrStatus) 
+		std::wstring error = L"Conditional FAILED(hr) met. HRESULT hr = " + std::to_wstring(hr) + L" hrStatus = " + std::to_wstring(hrStatus) 
 			+ L" Media Type = " + std::to_wstring(meType);
 		
 		if (debug) MessageBox(NULL, error.c_str(), L"CPlayer::HandleEvent", MB_OK);
@@ -430,6 +433,7 @@ HRESULT CPlayer::OnTopologyStatus(IMFMediaEvent* pEvent) {
 	if (SUCCEEDED(hr) && (status == MF_TOPOSTATUS_READY)) {
 		SafeRelease(&m_pVideoDisplay);
 
+		//Fails if the media file doesn't have a video stream
 		(void)MFGetService(m_pSession, MR_VIDEO_RENDER_SERVICE, IID_PPV_ARGS(&m_pVideoDisplay));
 
 		hr = StartPlayback();
@@ -526,7 +530,7 @@ HRESULT CPlayer::Repaint() {
 
 HRESULT CPlayer::ResizeVideo(WORD width, WORD height) {
 	if (m_pVideoDisplay) {
-		RECT rcDest = { 0, 0l, width, height };
+		RECT rcDest = { 0, 0, width, height };
 		return m_pVideoDisplay->SetVideoPosition(NULL, &rcDest);
 	}
 	else return S_OK;

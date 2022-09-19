@@ -19,13 +19,13 @@ int Initialize2(HINSTANCE hInstance, int nCmdShow);
 
 HINSTANCE g_hInstance; //from cplayer example "current instance"
 BOOL g_bRepaintClient = TRUE; //from cplayer example; "repaint the client application area?"
-CPlayer *g_pPlayer = NULL;
+CPlayer* g_pPlayer = NULL;
 
 const std::wstring videoPath = L"C:\\Users\\coldc\\Documents\\miscfiles\\rat.mp4";
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
 	Initialize(hInstance, nCmdShow);
-	
+
 
 
 
@@ -149,7 +149,7 @@ LRESULT	CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 		// Suppress window erasing, to reduce flickering while the video is playing.
 		return 1;
 
-	return -1;
+		return -1;
 	}
 
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -183,7 +183,7 @@ void drawImage(HDC hdc) {
 	//graphics.DrawImage(&image, 50, 50);
 }
 
-void drawTest(HWND &hwnd) {
+void drawTest(HWND& hwnd) {
 	HDC hdc;
 	hdc = GetDC(hwnd);
 	//SelectObject(hdc, )
@@ -193,10 +193,10 @@ void drawTest(HWND &hwnd) {
 	LineTo(hdc, 15, 30);
 
 	COLORREF fontcolor = 0x000000ff, alpha = 0x00ff0000;
-	
+
 	SetTextColor(hdc, fontcolor);
 	SetBkColor(hdc, alpha);
-	
+
 
 	RECT textrect;
 	textrect.left = 30;
@@ -238,10 +238,10 @@ void openVideo(HWND hwnd) {
 		MessageBox(NULL, L"CPlayer::CreateInstance worked!!!", L"main::openVideo", MB_OK);
 		//UpdateUI(hwnd, Closed);
 	}*/
-	
-	
+
+
 	hr = g_pPlayer->OpenURL(videoPath.c_str());
-	
+
 
 	if (FAILED(hr)) {
 		MessageBox(NULL, L"g_pPlayer->OpenURL failed!!!", L"main::openVideo", MB_OK);
@@ -257,7 +257,7 @@ void openVideo(HWND hwnd) {
 			}
 		}
 		UpdateUI(hwnd, OpenPending);
-		
+
 		//MSG message = { hwnd, WM_APP_PLAYER_EVENT, 0, 0, GetMessageTime(), {0,0} };
 		//DispatchMessage(&message);
 
@@ -295,11 +295,11 @@ void OnPlayerEvent(HWND hwnd, WPARAM pUnkPtr)
 	HRESULT hr = g_pPlayer->HandleEvent(pUnkPtr);
 	if (FAILED(hr))
 	{
-		
+
 		MessageBox(NULL, L"g_pPlayer->HandleEvent The badness!!!", L"main::OnPlayerEvent", MB_OK);
 	}
 	UpdateUI(hwnd, g_pPlayer->GetState());
-	
+
 }
 
 
