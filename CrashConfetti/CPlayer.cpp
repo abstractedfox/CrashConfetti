@@ -36,6 +36,8 @@ HRESULT AddOutputNode(
 
 void msgBox(std::wstring output, std::wstring title);
 
+const bool debugboxes = true;
+
 
 template <class Q>
 HRESULT GetEventObject(IMFMediaEvent* pEvent, Q** ppObject) {
@@ -135,31 +137,43 @@ HRESULT CPlayer::OpenURL(const WCHAR* sURL) {
 	// 3. Create the topology.
 	// 4. Queue the topology [asynchronous]
 	// 5. Start playback [asynchronous - does not happen in this method.]
-	const bool debug = false;
+	const bool debug = true;
 	const std::wstring debugName = L"CPlayer::OpenURL";
 
 	IMFTopology* pTopology = NULL;
 	IMFPresentationDescriptor* pSourcePD = NULL;
 
 	HRESULT hr = CreateSession();
-	if (FAILED(hr)) goto done;
-	if (debug) {
-		std::wstring output;
-		output[0] = hr;
-		msgBox(output, debugName);
+	if (FAILED(hr)) {
+		if (debug) MessageBox(NULL, L"CreateSession() failed", debugName.c_str(), MB_OK);
+		goto done;
 	}
+
 	hr = CreateMediaSource(sURL, &m_pSource);
 	
-	if (FAILED(hr)) goto done;
+	if (FAILED(hr)) {
+		if (debug) MessageBox(NULL, L"CreateMediaSource failed", debugName.c_str(), MB_OK);
+	}
 
 	hr = m_pSource -> CreatePresentationDescriptor(&pSourcePD);
-	if (FAILED(hr)) goto done;
+	if (FAILED(hr)) {
+		if (debug) MessageBox(NULL, L"CreatePresentationDescriptor() failed", debugName.c_str(), MB_OK);
+		goto done;
+	}
 
 	hr = CreatePlaybackTopology(m_pSource, pSourcePD, m_hwndVideo, &pTopology);
-	if (FAILED(hr)) goto done;
+	if (FAILED(hr)) {
+		if (debug) MessageBox(NULL, L"CreatePlaybackTopology() failed", debugName.c_str(), MB_OK);
+		goto done;
+	}
 
 	hr = m_pSession->SetTopology(0, pTopology);
-	if (FAILED(hr)) goto done;
+	if (FAILED(hr)) {
+		if (debug) MessageBox(NULL, L"SetTopology() failed", debugName.c_str(), MB_OK);
+		goto done;
+	}
+
+	if (debug) MessageBox(NULL, L"Nothing failed!", debugName.c_str(), MB_OK);
 
 	m_state = OpenPending;
 
@@ -167,7 +181,9 @@ HRESULT CPlayer::OpenURL(const WCHAR* sURL) {
 
 done:
 	if (FAILED(hr)) m_state = Closed;
-
+	else {
+		if (debug) MessageBox(NULL, L"No problems here!", debugName.c_str(), MB_OK);
+	}
 	SafeRelease(&pSourcePD);
 	SafeRelease(&pTopology);
 	return hr;
@@ -342,8 +358,18 @@ done:
 
 HRESULT CPlayer::HandleEvent(UINT_PTR pEventPtr) {
 	const bool debug = true;
+	std::wstring debugString = L"";
+
 	HRESULT hrStatus = S_OK;
 	MediaEventType meType = MEUnknown;
+	
+	if (debug) {
+		debugString += L"pEventPtr: ";
+		debugString += std::to_wstring(pEventPtr);
+		
+		debugString += L'\n';
+		MessageBox(NULL, debugString.c_str(), L"CPlayer::HandleEvent", MB_OK);
+	}
 
 	IMFMediaEvent* pEvent = (IMFMediaEvent*)pEventPtr;
 
@@ -360,22 +386,32 @@ HRESULT CPlayer::HandleEvent(UINT_PTR pEventPtr) {
 
 	hr = pEvent->GetStatus(&hrStatus);
 	if (SUCCEEDED(hr) && FAILED(hrStatus)) hr = hrStatus;
-	if (FAILED(hr)) goto done;
+	if (FAILED(hr)) {
+		std::wstring error = L"Conditional (SUCCEEDED(hr) && FAILED(hrStatus) not met. HRESULT hr = " + std::to_wstring(hr) + L" hrStatus = " + std::to_wstring(hrStatus) 
+			+ L" Media Type = " + std::to_wstring(meType);
+		
+		if (debug) MessageBox(NULL, error.c_str(), L"CPlayer::HandleEvent", MB_OK);
+		goto done;
+	}
 
 	switch (meType) {
 	case MESessionTopologyStatus:
+		if (debug) MessageBox(NULL, L"case MESessionTopologyStatus reached", L"CPlayer::HandleEvent", MB_OK);
 		hr = OnTopologyStatus(pEvent);
 		break;
 
 	case MEEndOfPresentation:
+		if (debug) MessageBox(NULL, L"case MEEndOfPresentation reached", L"CPlayer::HandleEvent", MB_OK);
 		hr = OnPresentationEnded(pEvent);
 		break;
 
 	case MENewPresentation:
+		if (debug) MessageBox(NULL, L"case MENewPresentation reached", L"CPlayer::HandleEvent", MB_OK);
 		hr = OnNewPresentation(pEvent);
 		break;
 
 	default:
+		if (debug) MessageBox(NULL, L"case default reached", L"CPlayer::HandleEvent", MB_OK);
 		hr = OnSessionEvent(pEvent, meType);
 		break;
 	}
@@ -386,6 +422,7 @@ done:
 
 }
 
+//Fails if the media doesn't have a video stream
 HRESULT CPlayer::OnTopologyStatus(IMFMediaEvent* pEvent) {
 	UINT32 status;
 
@@ -428,14 +465,30 @@ done:
 }
 
 HRESULT CPlayer::StartPlayback() {
+	const bool debug = true;
 	assert(m_pSession != NULL);
+
+	if (debug) {
+		MessageBox(NULL, L"StartPlayback() reached", L"CPlayer::StartPlayback()", MB_OK);
+	}
 
 	PROPVARIANT varStart;
 	PropVariantInit(&varStart);
 
 	HRESULT hr = m_pSession->Start(&GUID_NULL, &varStart);
-	if (SUCCEEDED(hr)) m_state = Started;
+	if (SUCCEEDED(hr)) {
+		if (debug) {
+			MessageBox(NULL, L"StartPlayback():m_psession->Start was successful", L"CPlayer::StartPlayback()", MB_OK);
+		}
+		m_state = Started;
+	}
 	//Docs point out that start is an asyncrhonous operation but an MESessionStarted event with an error code would be sent if it didn't work
+	else {
+		if (debug) {
+			MessageBox(NULL, L"StartPlayback():m_psession->Start was unsuccessful", L"CPlayer::StartPlayback()", MB_OK);
+		}
+	}
+
 
 	PropVariantClear(&varStart);
 	return hr;
@@ -448,6 +501,10 @@ HRESULT CPlayer::Play() {
 }
 
 //We're going to skip writing out HRESULT CPlayer::Pause(), it shouldn't be necessary for what we're doing
+
+HRESULT CPlayer::Pause() {
+	return 0;
+}
 
 HRESULT CPlayer::Stop() {
 	if (m_state != Started && m_state != Paused) return MF_E_INVALIDREQUEST;
