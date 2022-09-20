@@ -186,7 +186,7 @@ void paintWindowTransparent(HWND hwnd) {
 }
 
 void drawImage(HDC hdc) {
-	std::wstring testdir = L"C:\\Users\\coldc\\Documents\\miscfiles", filename = L"kitty.jpg";
+	std::wstring testdir = L"", filename = L"kitty.jpg";
 
 	SetCurrentDirectoryW(testdir.c_str());
 	//Image image = Image(filename.c_str());
