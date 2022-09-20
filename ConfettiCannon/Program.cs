@@ -77,7 +77,7 @@ async void watchExplorer()
                 while (!getExplorerProc()) ; //Block until explorer restarts
                 explorerAlive = true;
             }
-            else Console.WriteLine("Explorer moment");
+            //else Console.WriteLine("Explorer moment");
         }
     });
 }
