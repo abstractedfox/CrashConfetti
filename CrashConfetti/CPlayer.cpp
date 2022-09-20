@@ -61,8 +61,10 @@ HRESULT GetEventObject(IMFMediaEvent* pEvent, Q** ppObject) {
 HRESULT CPlayer::CreateInstance(
 	HWND hVideo, //Video window
 	HWND hEvent, //Window to receive notifications
-	CPlayer** ppPlayer) //Ptr to the CPlayer object
+	CPlayer** ppPlayer, //Ptr to the CPlayer object
+	int width, int height) 
 {
+
 	if (ppPlayer == NULL) return E_POINTER;
 
 	CPlayer* pPlayer = new (std::nothrow) CPlayer(hVideo, hEvent);
@@ -71,6 +73,8 @@ HRESULT CPlayer::CreateInstance(
 	HRESULT hr = pPlayer->Initialize();
 
 	if (SUCCEEDED(hr)) {
+		pPlayer->globalW = width;
+		pPlayer->globalH = height;
 		*ppPlayer = pPlayer;
 	}
 
@@ -177,6 +181,7 @@ HRESULT CPlayer::OpenURL(const WCHAR* sURL) {
 
 	m_state = OpenPending;
 
+
 	// If SetTopology succeeds, the media session will queue an MESessionTopologySet event.
 
 done:
@@ -188,6 +193,8 @@ done:
 	SafeRelease(&pTopology);
 	return hr;
 }
+
+
 
 HRESULT CreateMediaSource(PCWSTR sURL, IMFMediaSource** ppSource) {
 	MF_OBJECT_TYPE ObjectType = MF_OBJECT_INVALID;
@@ -495,6 +502,9 @@ HRESULT CPlayer::StartPlayback() {
 
 
 	PropVariantClear(&varStart);
+
+	this->ResizeVideo(globalW, globalH);
+
 	return hr;
 }
 
@@ -524,16 +534,27 @@ HRESULT CPlayer::Stop() {
 //This is used to notify the EVR if a WM_PAINT message is sent while stopped or paused
 //There should also be a handler for the WM_PAINT message in the main cpp that calls this (see step 6 'control playback')
 HRESULT CPlayer::Repaint() {
+
+
 	if (m_pVideoDisplay) return m_pVideoDisplay->RepaintVideo();
 	else return S_OK;
 }
 
 HRESULT CPlayer::ResizeVideo(WORD width, WORD height) {
+	const bool debug = false;
 	if (m_pVideoDisplay) {
+		if (debug) MessageBox(NULL, L"Sizey", L"CPlayer::ResizeVideo()", MB_OK);
 		RECT rcDest = { 0, 0, width, height };
+
+		//SetAspectRatioMode seems to undo our transparency via SetLayeredWindowAttributes, so we won't use it for now
+		//m_pVideoDisplay->SetAspectRatioMode(MFVideoARMode_NonLinearStretch);
+		m_pVideoDisplay -> SetAspectRatioMode(MFVideoARMode_None);
 		return m_pVideoDisplay->SetVideoPosition(NULL, &rcDest);
 	}
-	else return S_OK;
+	else {
+		if (debug) MessageBox(NULL, L"m_pVideoDisplay == false", L"CPlayer::ResizeVideo()", MB_OK);
+		return S_OK;
+	}
 }
 
 HRESULT CPlayer::CloseSession() {

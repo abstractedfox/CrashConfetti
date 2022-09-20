@@ -51,7 +51,7 @@ template <class T> void SafeRelease(T** ppT)
 class CPlayer : public IMFAsyncCallback
 {
 public:
-    static HRESULT CreateInstance(HWND hVideo, HWND hEvent, CPlayer **ppPlayer);
+    static HRESULT CreateInstance(HWND hVideo, HWND hEvent, CPlayer **ppPlayer, int width, int height);
 
     //IUnknown methods
     STDMETHODIMP QueryInterface(REFIID iid, void** ppv);
@@ -77,6 +77,9 @@ public:
     HRESULT Repaint();
     HRESULT ResizeVideo(WORD width, WORD height);
     BOOL HasVideo() const { return (m_pVideoDisplay != NULL); }
+
+
+    int globalW, globalH;
 
 
 

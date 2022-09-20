@@ -3,6 +3,7 @@
 #include <iostream>
 #include "CPlayer.h"
 #include <string>
+#include <pathcch.h>
 //#include <gdiplusheaders.h>
 //#include <gdiplusgraphics.h>
 
@@ -15,19 +16,40 @@ void paintWindowTransparent(HWND hwnd);
 void OnPlayerEvent(HWND hwnd, WPARAM pUnkPtr);
 LRESULT OnCreateWindow(HWND hwnd);
 int Initialize(HINSTANCE hInstance, int nCmdShow);
+void windowToTop(HWND hwnd);
 
 HINSTANCE g_hInstance; //from cplayer example "current instance"
 BOOL g_bRepaintClient = TRUE; //from cplayer example; "repaint the client application area?"
 CPlayer* g_pPlayer = NULL;
 
-const std::wstring videoPath = L"C:\\Users\\coldc\\Documents\\miscfiles\\apple.mp4";
+int globalH, globalW;
+
+//const std::wstring videoPath = L"C:\\Users\\coldc\\Documents\\miscfiles\\rat.mp4";
+const std::wstring videoFileName = L"rat.mp4";
+std::wstring videoPath = L"";
+bool videoHasStarted;
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
+	//Initialize globals
+	videoHasStarted = false;
+	globalH = 0;
+	globalW = 0;
+
+	//Look in the folder containing the exe for a video to use
+	wchar_t localpath[1000]; //if the path to this is longer than 1000 characters you've got more issues than windows explorer crashing
+	for (int i = 0; i < 1000; i++) localpath[i] = L'\0';
+	GetModuleFileNameW(NULL, localpath, 1000);
+	int slashPos = 0;
+	for (int i = 0; i < sizeof(localpath); i++) {
+		if (localpath[i] != L'\0') videoPath += &localpath[i];
+		else break;
+
+		if (localpath[i] == L'\\') slashPos = i;
+	}
+	videoPath = videoPath.substr(0, slashPos + 1);
+	videoPath += videoFileName;
+
 	Initialize(hInstance, nCmdShow);
-
-
-
-
 
 	MSG message = {};
 	//GetMessage always returns > 0 unless the program is exiting, breaking the loop
@@ -41,6 +63,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 int Initialize(HINSTANCE hInstance, int nCmdShow) {
 	const wchar_t CLASS_NAME[] = L"It's time for mf confetti";
+	const bool overscan = true;
+	const int overscanAmnt = 12;
 
 	WNDCLASS windowclass = { };
 
@@ -50,36 +74,70 @@ int Initialize(HINSTANCE hInstance, int nCmdShow) {
 
 	RegisterClass(&windowclass);
 
+	/*
+	MONITORINFOEXW monitor;
+	monitor.cbSize = sizeof(MONITORINFOEXW);
+	bool monitorWorked = GetMonitorInfoW(MonitorFromWindow(GetActiveWindow(), MONITOR_DEFAULTTONEAREST), &monitor);
+	
+	std::wstring rectout = std::to_wstring(monitor.rcMonitor.left) + L' ' + std::to_wstring(monitor.rcMonitor.top)
+		+ L' ' + std::to_wstring(monitor.rcMonitor.right) + L' ' + std::to_wstring(monitor.rcMonitor.bottom);
+		*/
+
+	HDC hdc = GetDC(NULL);
+	//int screenW = GetDeviceCaps(hdc, HORZRES), screenH = GetDeviceCaps(hdc, VERTRES);
+	int screenW = GetSystemMetrics(SM_CXFULLSCREEN), screenH = GetSystemMetrics(SM_CYFULLSCREEN);
+	int titleH = GetSystemMetrics(SM_CYSIZE);
+
+	globalH = screenH + titleH;
+	globalW = screenW;
+
+	if (overscan) {
+		globalH += 150 + overscanAmnt * 2; //yes it takes this much to get over the taskbar
+		globalW += overscanAmnt * 2; //extra since the H value undercounts due to the task bar
+	}
+
+	int windowPosW = 0, windowPosH = 0 - titleH;
+	if (overscan) {
+		windowPosW -= overscanAmnt;
+		windowPosH -= overscanAmnt;
+	}
+
+	//MessageBox(NULL, res.c_str(), L"blah", MB_OK);
+
 	HWND hwnd = CreateWindowEx(
 		WS_EX_LAYERED, //"optional" window style; WS_EX_LAYERED is necessary for transparency
 		CLASS_NAME,
 		L"Confetti",
 		WS_OVERLAPPEDWINDOW, //window style
 
-		//size/pos
-		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+		//wpos, hpos, wsize, hsize
+		//CW_USEDEFAULT, CW_USEDEFAULT, 0, 0,
+		//0, 0 - titleH, screenW, screenH + titleH,
+		windowPosW, windowPosH, globalW, globalH,
 
 		NULL, //parent window
 		NULL, //menu
 		hInstance,
 		NULL
 	);
-
+	
 
 
 	if (hwnd == NULL) return -1;
+
+	
 
 	g_hInstance = hInstance; //this is for the video playback
 
 	COLORREF basecolor = 0x00000000; //last 3 bytes are bbggrr; first is always 00
 
-	bool didTransparencyWork = SetLayeredWindowAttributes(hwnd, basecolor, 80, LWA_COLORKEY); //3rd arg is alpha
+	bool didTransparencyWork = SetLayeredWindowAttributes(hwnd, basecolor, 0, LWA_COLORKEY); //3rd arg is alpha
 
-
-	ShowWindow(hwnd, nCmdShow);
+	//Window is hidden until playback begins
+	ShowWindow(hwnd, SW_HIDE);
 
 	//openVideo(hwnd);
-	UpdateWindow(hwnd);
+	//UpdateWindow(hwnd);
 
 	return 0;
 }
@@ -97,7 +155,7 @@ LRESULT	CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 		return 0;
 
 	case WM_PAINT:
-		//OnPaint(hwnd);
+		OnPaint(hwnd);
 		break;
 
 	case WM_APP_PLAYER_EVENT:
@@ -174,14 +232,15 @@ void OnPaint(HWND hwnd) {
 	HDC hdc = BeginPaint(hwnd, &ps);
 
 	if (g_pPlayer && g_pPlayer->HasVideo()) {
-		MessageBox(NULL, L"There is video!!!!", L"main::OnPaint", MB_OK);
+		//MessageBox(NULL, L"There is video!!!!", L"main::OnPaint", MB_OK);
+
 		g_pPlayer->Repaint();
 	}
 	else {
-		MessageBox(NULL, L"There is no video!!!!", L"main::OnPaint", MB_OK);
-		RECT rc;
-		GetClientRect(hwnd, &rc);
-		FillRect(hdc, &rc, (HBRUSH)COLOR_WINDOW);
+		//MessageBox(NULL, L"There is no video!!!!", L"main::OnPaint", MB_OK);
+		//RECT rc;
+		//GetClientRect(hwnd, &rc);
+		//FillRect(hdc, &rc, (HBRUSH)COLOR_WINDOW);
 	}
 	EndPaint(hwnd, &ps);
 }
@@ -199,8 +258,11 @@ void openVideo(HWND hwnd) {
 		//UpdateUI(hwnd, Closed);
 	}*/
 
+	//hr = g_pPlayer->ResizeVideo((WORD)50, (WORD)50);
 
 	hr = g_pPlayer->OpenURL(videoPath.c_str());
+
+
 
 
 	if (FAILED(hr)) {
@@ -252,13 +314,24 @@ void UpdateUI(HWND hwnd, PlayerState state) {
 
 void OnPlayerEvent(HWND hwnd, WPARAM pUnkPtr)
 {
+	//this function actually initiates playback
+
+
 	HRESULT hr = g_pPlayer->HandleEvent(pUnkPtr);
+	ShowWindow(hwnd, SW_NORMAL);
+	windowToTop(hwnd);
 	if (FAILED(hr))
 	{
-
 		MessageBox(NULL, L"g_pPlayer->HandleEvent The badness!!!", L"main::OnPlayerEvent", MB_OK);
 	}
 	UpdateUI(hwnd, g_pPlayer->GetState());
+
+	if (g_pPlayer->GetState() == Started) {
+		videoHasStarted = true;
+	}
+	if (g_pPlayer->GetState() == Stopped && videoHasStarted) {
+		ExitProcess(0);
+	}
 
 }
 
@@ -266,11 +339,13 @@ void OnPlayerEvent(HWND hwnd, WPARAM pUnkPtr)
 //asdf
 LRESULT OnCreateWindow(HWND hwnd) {
 	HRESULT hr;
-	hr = CPlayer::CreateInstance(hwnd, hwnd, &g_pPlayer); //initialize the player
+	hr = CPlayer::CreateInstance(hwnd, hwnd, &g_pPlayer, globalW, globalH); //initialize the player
 	if (SUCCEEDED(hr)) {
 		//MessageBox(NULL, L"CPlayer::CreateInstance worked!!!", L"main::OnCreateWindow", MB_OK);
 		//UpdateUI(hwnd, Closed);
 		openVideo(hwnd);
+		
+
 		return 0;
 	}
 	else {
@@ -279,6 +354,12 @@ LRESULT OnCreateWindow(HWND hwnd) {
 	}
 }
 
+void windowToTop(HWND hwnd) {
+	RECT currentWindow;
+	GetWindowRect(hwnd, &currentWindow);
+	SetWindowPos(hwnd, HWND_TOPMOST, currentWindow.left, currentWindow.top, currentWindow.right, currentWindow.bottom, SWP_NOSIZE);
+
+}
 
 /*
 int main() {
