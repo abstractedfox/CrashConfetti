@@ -24,8 +24,8 @@ CPlayer* g_pPlayer = NULL;
 
 int globalH, globalW;
 
-//const std::wstring videoPath = L"C:\\Users\\coldc\\Documents\\miscfiles\\rat.mp4";
-const std::wstring videoFileName = L"rat.mp4";
+
+const std::wstring videoFileName = L"confetti.mp4";
 std::wstring videoPath = L"";
 bool videoHasStarted;
 

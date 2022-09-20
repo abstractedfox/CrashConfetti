@@ -5,22 +5,57 @@ VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CrashConfetti", "\\CHRISSERVER\Data\Documents\code projects etc\confetti\CrashConfetti\CrashConfetti\CrashConfetti.vcxproj", "{3AD2E19A-84CE-403A-9153-A7B7A15AE1E1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfettiCannon", "ConfettiCannon\ConfettiCannon.csproj", "{73949D70-993E-4E2A-A314-B1500A873E25}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		BothProjects|Any CPU = BothProjects|Any CPU
+		BothProjects|x64 = BothProjects|x64
+		BothProjects|x86 = BothProjects|x86
+		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3AD2E19A-84CE-403A-9153-A7B7A15AE1E1}.BothProjects|Any CPU.ActiveCfg = Both|x64
+		{3AD2E19A-84CE-403A-9153-A7B7A15AE1E1}.BothProjects|Any CPU.Build.0 = Both|x64
+		{3AD2E19A-84CE-403A-9153-A7B7A15AE1E1}.BothProjects|x64.ActiveCfg = Both|x64
+		{3AD2E19A-84CE-403A-9153-A7B7A15AE1E1}.BothProjects|x64.Build.0 = Both|x64
+		{3AD2E19A-84CE-403A-9153-A7B7A15AE1E1}.BothProjects|x86.ActiveCfg = Both|Win32
+		{3AD2E19A-84CE-403A-9153-A7B7A15AE1E1}.BothProjects|x86.Build.0 = Both|Win32
+		{3AD2E19A-84CE-403A-9153-A7B7A15AE1E1}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{3AD2E19A-84CE-403A-9153-A7B7A15AE1E1}.Debug|Any CPU.Build.0 = Debug|x64
 		{3AD2E19A-84CE-403A-9153-A7B7A15AE1E1}.Debug|x64.ActiveCfg = Debug|x64
 		{3AD2E19A-84CE-403A-9153-A7B7A15AE1E1}.Debug|x64.Build.0 = Debug|x64
 		{3AD2E19A-84CE-403A-9153-A7B7A15AE1E1}.Debug|x86.ActiveCfg = Debug|Win32
 		{3AD2E19A-84CE-403A-9153-A7B7A15AE1E1}.Debug|x86.Build.0 = Debug|Win32
+		{3AD2E19A-84CE-403A-9153-A7B7A15AE1E1}.Release|Any CPU.ActiveCfg = Release|x64
+		{3AD2E19A-84CE-403A-9153-A7B7A15AE1E1}.Release|Any CPU.Build.0 = Release|x64
 		{3AD2E19A-84CE-403A-9153-A7B7A15AE1E1}.Release|x64.ActiveCfg = Release|x64
 		{3AD2E19A-84CE-403A-9153-A7B7A15AE1E1}.Release|x64.Build.0 = Release|x64
 		{3AD2E19A-84CE-403A-9153-A7B7A15AE1E1}.Release|x86.ActiveCfg = Release|Win32
 		{3AD2E19A-84CE-403A-9153-A7B7A15AE1E1}.Release|x86.Build.0 = Release|Win32
+		{73949D70-993E-4E2A-A314-B1500A873E25}.BothProjects|Any CPU.ActiveCfg = Both|Any CPU
+		{73949D70-993E-4E2A-A314-B1500A873E25}.BothProjects|Any CPU.Build.0 = Both|Any CPU
+		{73949D70-993E-4E2A-A314-B1500A873E25}.BothProjects|x64.ActiveCfg = Both|Any CPU
+		{73949D70-993E-4E2A-A314-B1500A873E25}.BothProjects|x64.Build.0 = Both|Any CPU
+		{73949D70-993E-4E2A-A314-B1500A873E25}.BothProjects|x86.ActiveCfg = Both|Any CPU
+		{73949D70-993E-4E2A-A314-B1500A873E25}.BothProjects|x86.Build.0 = Both|Any CPU
+		{73949D70-993E-4E2A-A314-B1500A873E25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73949D70-993E-4E2A-A314-B1500A873E25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73949D70-993E-4E2A-A314-B1500A873E25}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{73949D70-993E-4E2A-A314-B1500A873E25}.Debug|x64.Build.0 = Debug|Any CPU
+		{73949D70-993E-4E2A-A314-B1500A873E25}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{73949D70-993E-4E2A-A314-B1500A873E25}.Debug|x86.Build.0 = Debug|Any CPU
+		{73949D70-993E-4E2A-A314-B1500A873E25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73949D70-993E-4E2A-A314-B1500A873E25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73949D70-993E-4E2A-A314-B1500A873E25}.Release|x64.ActiveCfg = Release|Any CPU
+		{73949D70-993E-4E2A-A314-B1500A873E25}.Release|x64.Build.0 = Release|Any CPU
+		{73949D70-993E-4E2A-A314-B1500A873E25}.Release|x86.ActiveCfg = Release|Any CPU
+		{73949D70-993E-4E2A-A314-B1500A873E25}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

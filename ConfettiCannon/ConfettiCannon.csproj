@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Configurations>Debug;Release;Both</Configurations>
+    <BaseOutputPath>Z:\Documents\code projects etc\confetti\CrashConfetti\BuildBoth</BaseOutputPath>
+  </PropertyGroup>
+
+</Project>
