@@ -98,7 +98,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Both|x64'">
-    <OutDir>$(SolutionDir)\BuildBoth\Both\net6.0\</OutDir>
+    <OutDir>$(SolutionDir)\BuildBoth\Both\net6.0\ConfettiApp</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
