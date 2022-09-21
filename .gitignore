@@ -6,6 +6,7 @@
 # Test mp4s that don't need to be included
 rat.mp4
 confettitemp.mp4
+confetti.mp4
 
 # User-specific files
 *.rsuser

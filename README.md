@@ -1,6 +1,6 @@
 # CrashConfetti
 
-CrashConfetti is a fun app that produces a pop of confetti on the main monitor when Windows Explorer crashes or restarts.
+CrashConfetti is a fun and simple app that produces a pop of confetti on the main monitor when Windows Explorer crashes or restarts.
 
 How to use:
 1. Run ConfettiCannon.exe
@@ -10,7 +10,7 @@ How to use:
 
 The application exists in two components; a C++ program that performs the animation (CrashConfetti.exe) and exits when complete, and a C# script that watches the Explorer process and calls the confetti program when all instances exit (ConfettiCannon.exe).
 
-The solution has both configured to build the script to /BuildBoth/Both/net6.0/, and CrashConfetti.exe to /BuildBoth/Both/net6.0/ConfettiApp. A "confetti.mp4" must also be in the ConfettiApp directory in order to work. An original confetti animation is supplied, but feel free to use your own!
+The solution has both configured to build the script to /BuildBoth/Both/net6.0/, and CrashConfetti.exe to /BuildBoth/Both/net6.0/ConfettiApp. A "confetti.mp4" must also be in the ConfettiApp directory, or it won't have any confetti to explode!
 
 If you're making your own confetti.mp4, bare in mind that the alpha channel is set to solid black (#000000), so anything other than this color will obfuscate the screen. Ideally this would be your confetti, so watch out for that. It's surprisingly difficult to get h.264 artifacts to not be ever slightly not black, but feel free to share tips or ideas if you find a good method.
 
