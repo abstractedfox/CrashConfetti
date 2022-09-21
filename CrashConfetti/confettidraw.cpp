@@ -49,6 +49,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	videoPath = videoPath.substr(0, slashPos + 1);
 	videoPath += videoFileName;
 
+	MessageBox(NULL, videoPath.c_str(), L"main::WindowProc", MB_OK);
+
+
 	Initialize(hInstance, nCmdShow);
 
 	MSG message = {};
@@ -74,17 +77,6 @@ int Initialize(HINSTANCE hInstance, int nCmdShow) {
 
 	RegisterClass(&windowclass);
 
-	/*
-	MONITORINFOEXW monitor;
-	monitor.cbSize = sizeof(MONITORINFOEXW);
-	bool monitorWorked = GetMonitorInfoW(MonitorFromWindow(GetActiveWindow(), MONITOR_DEFAULTTONEAREST), &monitor);
-	
-	std::wstring rectout = std::to_wstring(monitor.rcMonitor.left) + L' ' + std::to_wstring(monitor.rcMonitor.top)
-		+ L' ' + std::to_wstring(monitor.rcMonitor.right) + L' ' + std::to_wstring(monitor.rcMonitor.bottom);
-		*/
-
-	HDC hdc = GetDC(NULL);
-	//int screenW = GetDeviceCaps(hdc, HORZRES), screenH = GetDeviceCaps(hdc, VERTRES);
 	int screenW = GetSystemMetrics(SM_CXFULLSCREEN), screenH = GetSystemMetrics(SM_CYFULLSCREEN);
 	int titleH = GetSystemMetrics(SM_CYSIZE);
 
@@ -185,6 +177,7 @@ void paintWindowTransparent(HWND hwnd) {
 	EndPaint(hwnd, &ps);
 }
 
+//Leaving this in case there is a desire to use static images at some point in the future
 void drawImage(HDC hdc) {
 	std::wstring testdir = L"", filename = L"kitty.jpg";
 
@@ -221,7 +214,7 @@ void drawTest(HWND& hwnd) {
 	textrect.right = 600;
 	textrect.top = 60;
 	textrect.bottom = 900;
-	std::wstring texty = L"Goodbye Bitch!!";
+	std::wstring texty = L"Goodbye!!";
 	MoveToEx(hdc, 50, 60, (LPPOINT)NULL);
 	DrawText(hdc, texty.c_str(), texty.length(), &textrect, DT_CENTER);
 }
@@ -245,18 +238,11 @@ void OnPaint(HWND hwnd) {
 	EndPaint(hwnd, &ps);
 }
 
+
 void openVideo(HWND hwnd) {
 	const bool debug = false;
 	HRESULT hr;
-	/* asdf
-	hr = CPlayer::CreateInstance(hwnd, hwnd, &g_pPlayer); //initialize the player
-	if (FAILED(hr)) {
-		MessageBox(NULL, L"CPlayer::CreateInstance failed!!!", L"main::openVideo", MB_OK);
-	}
-	if (SUCCEEDED(hr)) {
-		MessageBox(NULL, L"CPlayer::CreateInstance worked!!!", L"main::openVideo", MB_OK);
-		//UpdateUI(hwnd, Closed);
-	}*/
+	
 
 	//hr = g_pPlayer->ResizeVideo((WORD)50, (WORD)50);
 
@@ -264,9 +250,8 @@ void openVideo(HWND hwnd) {
 
 
 
-
 	if (FAILED(hr)) {
-		MessageBox(NULL, L"g_pPlayer->OpenURL failed!!!", L"main::openVideo", MB_OK);
+		if (debug) MessageBox(NULL, L"g_pPlayer->OpenURL failed!!!", L"main::openVideo", MB_OK);
 	}
 	if (SUCCEEDED(hr)) {
 		if (debug) {
@@ -280,8 +265,6 @@ void openVideo(HWND hwnd) {
 		}
 		UpdateUI(hwnd, OpenPending);
 
-		//MSG message = { hwnd, WM_APP_PLAYER_EVENT, 0, 0, GetMessageTime(), {0,0} };
-		//DispatchMessage(&message);
 
 	}
 
@@ -314,6 +297,7 @@ void UpdateUI(HWND hwnd, PlayerState state) {
 
 void OnPlayerEvent(HWND hwnd, WPARAM pUnkPtr)
 {
+	const bool debug = false;
 	//this function actually initiates playback
 
 
@@ -322,7 +306,7 @@ void OnPlayerEvent(HWND hwnd, WPARAM pUnkPtr)
 	windowToTop(hwnd);
 	if (FAILED(hr))
 	{
-		MessageBox(NULL, L"g_pPlayer->HandleEvent The badness!!!", L"main::OnPlayerEvent", MB_OK);
+		if (debug) MessageBox(NULL, L"g_pPlayer->HandleEvent The badness!!!", L"main::OnPlayerEvent", MB_OK);
 	}
 	UpdateUI(hwnd, g_pPlayer->GetState());
 
@@ -336,21 +320,20 @@ void OnPlayerEvent(HWND hwnd, WPARAM pUnkPtr)
 }
 
 
-//asdf
 LRESULT OnCreateWindow(HWND hwnd) {
+	const bool debug = false;
 	HRESULT hr;
 	hr = CPlayer::CreateInstance(hwnd, hwnd, &g_pPlayer, globalW, globalH); //initialize the player
 	if (SUCCEEDED(hr)) {
-		//MessageBox(NULL, L"CPlayer::CreateInstance worked!!!", L"main::OnCreateWindow", MB_OK);
-		//UpdateUI(hwnd, Closed);
+		if (debug) MessageBox(NULL, L"CPlayer::CreateInstance worked!!!", L"main::OnCreateWindow", MB_OK);
 		openVideo(hwnd);
 		
 
 		return 0;
 	}
 	else {
-		//MessageBox(NULL, L"CPlayer::CreateInstance failed!!!", L"main::OnCreateWindow", MB_OK);
-		//return -1;
+		if (debug) MessageBox(NULL, L"CPlayer::CreateInstance failed!!!", L"main::OnCreateWindow", MB_OK);
+		return -1;
 	}
 }
 
@@ -360,10 +343,3 @@ void windowToTop(HWND hwnd) {
 	SetWindowPos(hwnd, HWND_TOPMOST, currentWindow.left, currentWindow.top, currentWindow.right, currentWindow.bottom, SWP_NOSIZE);
 
 }
-
-/*
-int main() {
-	std::wcout << L"It's time to mf party";
-	return 0;
-}
-*/

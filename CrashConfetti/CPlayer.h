@@ -23,7 +23,6 @@
 //extra includes idk
 #include <ShObjIdl.h>
 #include <strsafe.h>
-#include "resource.h"
 #include <new>
 
 const UINT WM_APP_PLAYER_EVENT = WM_APP + 1; //linker got angy when this wasn't const so now it's const
