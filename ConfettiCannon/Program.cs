@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 List < Process > explorerprocesses = new List<Process>();
 
-string confettiapp = Directory.GetCurrentDirectory() + "\\CrashConfetti.exe";
+string confettiapp = Directory.GetCurrentDirectory() + "\\ConfettiApp\\CrashConfetti.exe";
 if (File.Exists(confettiapp)) Console.WriteLine("Successfully located confetti");
 else
 {

@@ -49,6 +49,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	videoPath = videoPath.substr(0, slashPos + 1);
 	videoPath += videoFileName;
 
+	MessageBox(NULL, videoPath.c_str(), L"main::WindowProc", MB_OK);
+
+
 	Initialize(hInstance, nCmdShow);
 
 	MSG message = {};
