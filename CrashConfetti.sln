@@ -5,7 +5,12 @@ VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CrashConfetti", "\\CHRISSERVER\Data\Documents\code projects etc\confetti\CrashConfetti\CrashConfetti\CrashConfetti.vcxproj", "{3AD2E19A-84CE-403A-9153-A7B7A15AE1E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfettiCannon", "ConfettiCannon\ConfettiCannon.csproj", "{73949D70-993E-4E2A-A314-B1500A873E25}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfettiCannon", "ConfettiCannon\ConfettiCannon.csproj", "{73949D70-993E-4E2A-A314-B1500A873E25}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{07943FDD-2835-4B2D-8195-ED468A5C9048}"
+	ProjectSection(SolutionItems) = preProject
+		Licensing Info.txt = Licensing Info.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

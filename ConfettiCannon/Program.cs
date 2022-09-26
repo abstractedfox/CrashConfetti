@@ -1,4 +1,28 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿/*
+confettidraw.cpp, copyright Chris/abstractedfox 2022. 
+Launcher for CrashConfetti.exe; starts the program when all instances of Windows Explorer exit.
+
+This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+In addition to the standard GPL v3.0, this program includes an additional condition:
+Redistribution or modification of this code may not strike credit of the original author, Chris/abstractedfox
+
+Contact: chriswhoprograms@gmail.com
+*/
+
+
+// See https://aka.ms/new-console-template for more information
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -12,7 +36,7 @@ if (File.Exists(confettiapp)) Console.WriteLine("Successfully located confetti")
 else
 {
     Console.WriteLine(confettiapp + " contains no confetti");
-    return -1;
+    return 1;
 }
 
 
@@ -43,11 +67,17 @@ bool getExplorerProc()
                     explorerprocesses.Add(p);
                     Console.WriteLine("Success! " + p.ToString());
                 }
+                if (p.ProcessName == "ConfettiCannon" && p.Id != Process.GetCurrentProcess().Id)
+                {
+                    //If an instance of ConfettiCannon is already running, close this instance
+                    Console.WriteLine("ConfettiCannon is already running; exiting");
+                    Environment.Exit(2);
+                }
             }
         }
         catch (Win32Exception)
         {
-
+            //Some processes don't like to be looked at and will cause an exception, so ignore those
         }
     }
     if (explorerprocesses.Count > 0) return true;
