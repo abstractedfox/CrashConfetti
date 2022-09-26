@@ -31,7 +31,7 @@ Startup.ps1 produces a broken shortcut
 For reasons unknown, the script seems to produce a working shortcut as long as it's placed anywhere other than the startup folder. If you figure out what's wrong here, I'd love to know.
 
 Window border is visible
-Winapi seems to offer variable opacity for an entire window, or a single alpha channel that is locked to fully transparent (which is what is currently in use.)
+Winapi seems to offer variable opacity for an entire window, or a single alpha channel that is locked to fully transparent (which is what is currently in use.) I'm not convinced there isn't a possible workaround here, so future releases may look a little better
 
 Information about the program code:
 The application exists in two components; a C++ program that plays the animation (CrashConfetti.exe) and exits when complete, and a C# script that watches the Explorer process and calls the confetti program when all instances exit (ConfettiCannon.exe).
