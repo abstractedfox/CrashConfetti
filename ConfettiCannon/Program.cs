@@ -29,7 +29,7 @@ using System.Runtime.InteropServices;
 
 
 
-List < Process > explorerprocesses = new List<Process>();
+List <Process> explorerProcesses = new List<Process>();
 
 string confettiapp = Directory.GetCurrentDirectory() + "\\ConfettiApp\\CrashConfetti.exe";
 if (File.Exists(confettiapp)) Console.WriteLine("Successfully located confetti");
@@ -40,9 +40,9 @@ else
 }
 
 
-getExplorerProc();
+GetExplorerProc();
 
-watchExplorer();
+WatchExplorer();
 
 Console.WriteLine("i am ready to confetti");
 
@@ -51,10 +51,10 @@ while (true)
     await Task.Delay(10000);
 }
 
-bool getExplorerProc()
+bool GetExplorerProc()
 {
     Console.WriteLine("Looking for explorer");
-    explorerprocesses.Clear();
+    explorerProcesses.Clear();
     Process[] processes = Process.GetProcesses();
     foreach (Process p in processes)
     {
@@ -64,7 +64,7 @@ bool getExplorerProc()
             {
                 if (p.ProcessName == "explorer")
                 {
-                    explorerprocesses.Add(p);
+                    explorerProcesses.Add(p);
                     Console.WriteLine("Success! " + p.ToString());
                 }
                 if (p.ProcessName == "ConfettiCannon" && p.Id != Process.GetCurrentProcess().Id)
@@ -80,21 +80,21 @@ bool getExplorerProc()
             //Some processes don't like to be looked at and will cause an exception, so ignore those
         }
     }
-    if (explorerprocesses.Count > 0) return true;
+    if (explorerProcesses.Count > 0) return true;
     return false;
 }
 
-async void watchExplorer()
+async void WatchExplorer()
 {
     await Task.Run(async () => { 
         while (true)
         {
             bool explorerAlive = true;
             await Task.Delay(500);
-            for (int i = 0; i < explorerprocesses.Count; i++)
+            for (int i = 0; i < explorerProcesses.Count; i++)
             {
-                if (explorerprocesses[i].HasExited) explorerAlive = false;
-                if (explorerAlive == false && !explorerprocesses[i].HasExited)
+                if (explorerProcesses[i].HasExited) explorerAlive = false;
+                if (explorerAlive == false && !explorerProcesses[i].HasExited)
                 {
                     explorerAlive = true;
                     break;
@@ -103,8 +103,8 @@ async void watchExplorer()
             if (!explorerAlive)
             {
                 Console.WriteLine("CONFETTI");
-                cannon();
-                while (!getExplorerProc()) ; //Block until explorer restarts
+                Cannon();
+                while (!GetExplorerProc()) ; //Block until explorer restarts
                 explorerAlive = true;
             }
             //else Console.WriteLine("Explorer moment");
@@ -112,7 +112,7 @@ async void watchExplorer()
     });
 }
 
-void cannon()
+void Cannon()
 {
     Process.Start(confettiapp, "");
 }
