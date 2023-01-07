@@ -3,6 +3,8 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+CrashConfetti.exe
+
 # Test mp4s that don't need to be included
 rat.mp4
 confettitemp.mp4
@@ -37,6 +39,7 @@ bld/
 [Oo]ut/
 [Ll]og/
 [Ll]ogs/
+BuildBoth/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -366,3 +369,4 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/BuildBoth/Both/net6.0/ConfettiApp/CrashConfetti.exe
