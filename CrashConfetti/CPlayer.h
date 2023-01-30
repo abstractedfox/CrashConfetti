@@ -1,5 +1,5 @@
 /*
-confettidraw.cpp, copyright Chris/abstractedfox 2022. Implementation of Microsoft's Media Foundation API
+CPlayer.h, copyright Chris/abstractedfox 2022. Implementation of Microsoft's Media Foundation API
 
 This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@ Contact: chriswhoprograms@gmail.com
 #pragma once
 
 
-#include <mfidl.h> //maybe this will fix linker errors
 #include <mfapi.h>
 
 #include <Windows.h>
@@ -42,11 +41,6 @@ Contact: chriswhoprograms@gmail.com
 
 #include <Shlwapi.h>
 #include <evr.h>
-
-//extra includes idk
-#include <ShObjIdl.h>
-#include <strsafe.h>
-#include <new>
 
 const UINT WM_APP_PLAYER_EVENT = WM_APP + 1; //linker got angy when this wasn't const so now it's const
 

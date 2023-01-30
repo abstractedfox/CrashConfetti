@@ -1,5 +1,7 @@
 /*
-confettidraw.cpp, copyright Chris/abstractedfox 2022. Implementation of Microsoft's Media Foundation API
+CPlayer.cpp, an implementation of the Media Foundation library that follows 
+Microsoft's implementation example.
+Copyright Chris/abstractedfox 2022-2023 where applicable.
 
 This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -362,6 +364,7 @@ HRESULT CPlayer::CreateSession() {
 done:
 	return hr;
 }
+
 
 HRESULT CPlayer::Invoke(IMFAsyncResult* pResult) {
 	MediaEventType meType = MEUnknown;

@@ -1,5 +1,5 @@
 /*
-confettidraw.cpp, copyright Chris/abstractedfox 2022. Plays an mp4 file covering most of a monitor, utilizing transparency, and exits.
+confettidraw.cpp, copyright Chris/abstractedfox 2022-2023. Plays an mp4 file covering most of a monitor, utilizing transparency, and exits.
 
 This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -26,22 +26,18 @@ Contact: chriswhoprograms@gmail.com
 #include "CPlayer.h"
 #include <string>
 #include <pathcch.h>
-//#include <gdiplusheaders.h>
-//#include <gdiplusgraphics.h>
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void drawTest(HWND& hwnd);
 void openVideo(HWND hwnd);
-void UpdateUI(HWND hwnd, PlayerState state);
 void OnPaint(HWND hwnd);
-void paintWindowTransparent(HWND hwnd);
 void OnPlayerEvent(HWND hwnd, WPARAM pUnkPtr);
 LRESULT OnCreateWindow(HWND hwnd);
 int Initialize(HINSTANCE hInstance, int nCmdShow);
 void windowToTop(HWND hwnd);
 
 HINSTANCE g_hInstance; //from cplayer example "current instance"
-BOOL g_bRepaintClient = TRUE; //from cplayer example; "repaint the client application area?"
+//BOOL g_bRepaintClient = TRUE; //from cplayer example; "repaint the client application area."
 CPlayer* g_pPlayer = NULL;
 
 int globalH, globalW;
@@ -71,9 +67,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	videoPath = videoPath.substr(0, slashPos + 1);
 	videoPath += videoFileName;
 
-
-
-	Initialize(hInstance, nCmdShow);
+	if (Initialize(hInstance, nCmdShow) != 0) return -1;
 
 	MSG message = {};
 	//GetMessage always returns > 0 unless the program is exiting, breaking the loop
@@ -115,8 +109,6 @@ int Initialize(HINSTANCE hInstance, int nCmdShow) {
 		windowPosH -= overscanAmnt;
 	}
 
-	//MessageBox(NULL, res.c_str(), L"blah", MB_OK);
-
 	HWND hwnd = CreateWindowEx(
 		WS_EX_LAYERED, //"optional" window style; WS_EX_LAYERED is necessary for transparency
 		CLASS_NAME,
@@ -134,13 +126,9 @@ int Initialize(HINSTANCE hInstance, int nCmdShow) {
 		NULL
 	);
 	
-
-
 	if (hwnd == NULL) return -1;
 
-	
-
-	g_hInstance = hInstance; //this is for the video playback
+	g_hInstance = hInstance; //make this instance available to CPlayer
 
 	COLORREF basecolor = 0x00000000; //last 3 bytes are bbggrr; first is always 00
 
@@ -148,9 +136,6 @@ int Initialize(HINSTANCE hInstance, int nCmdShow) {
 
 	//Window is hidden until playback begins
 	ShowWindow(hwnd, SW_HIDE);
-
-	//openVideo(hwnd);
-	//UpdateWindow(hwnd);
 
 	return 0;
 }
@@ -172,7 +157,6 @@ LRESULT	CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 		break;
 
 	case WM_APP_PLAYER_EVENT:
-		//MessageBox(NULL, L"WM_APP_PLAYER_EVENT has been reached", L"main::WindowProc", MB_OK);
 		OnPlayerEvent(hwnd, wParam);
 		break;
 
@@ -186,39 +170,10 @@ LRESULT	CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
-void paintWindowTransparent(HWND hwnd) {
-	PAINTSTRUCT ps;
-	HDC hdc = BeginPaint(hwnd, &ps);
-
-	HBRUSH brushy = (HBRUSH)COLOR_WINDOW + 1;
-	brushy = CreateSolidBrush(RGB(0, 0, 0xff));
-	FillRect(hdc, &ps.rcPaint, brushy);
-	//drawTest(hwnd);
-
-	EndPaint(hwnd, &ps);
-}
-
-//Leaving this in case there is a desire to use static images at some point in the future
-void drawImage(HDC hdc) {
-	std::wstring testdir = L"", filename = L"kitty.jpg";
-
-	SetCurrentDirectoryW(testdir.c_str());
-	//Image image = Image(filename.c_str());
-	//Image* imageptr = &image;
-	//Graphics graphics = Graphics::FromImage(&image);
-	//Graphics graphics = Graphics(Graphics(&hdc));
-	//Graphics graphica(hdc);
-
-
-	//Graphics graphics = Graphics(&hwnd);
-
-	//graphics.DrawImage(&image, 50, 50);
-}
 
 void drawTest(HWND& hwnd) {
 	HDC hdc;
 	hdc = GetDC(hwnd);
-	//SelectObject(hdc, )
 
 
 	MoveToEx(hdc, 10, 10, (LPPOINT)NULL);
@@ -246,15 +201,7 @@ void OnPaint(HWND hwnd) {
 	HDC hdc = BeginPaint(hwnd, &ps);
 
 	if (g_pPlayer && g_pPlayer->HasVideo()) {
-		//MessageBox(NULL, L"There is video!!!!", L"main::OnPaint", MB_OK);
-
 		g_pPlayer->Repaint();
-	}
-	else {
-		//MessageBox(NULL, L"There is no video!!!!", L"main::OnPaint", MB_OK);
-		//RECT rc;
-		//GetClientRect(hwnd, &rc);
-		//FillRect(hdc, &rc, (HBRUSH)COLOR_WINDOW);
 	}
 	EndPaint(hwnd, &ps);
 }
@@ -263,17 +210,13 @@ void OnPaint(HWND hwnd) {
 void openVideo(HWND hwnd) {
 	const bool debug = false;
 	HRESULT hr;
-	
-
-	//hr = g_pPlayer->ResizeVideo((WORD)50, (WORD)50);
 
 	hr = g_pPlayer->OpenURL(videoPath.c_str());
-
-
 
 	if (FAILED(hr)) {
 		if (debug) MessageBox(NULL, L"g_pPlayer->OpenURL failed!!!", L"main::openVideo", MB_OK);
 	}
+
 	if (SUCCEEDED(hr)) {
 		if (debug) {
 			MessageBox(NULL, L"g_pPlayer->OpenURL HUGE SUCCESS!!!", L"main::openVideo", MB_OK);
@@ -284,36 +227,8 @@ void openVideo(HWND hwnd) {
 				MessageBox(NULL, L"g_pPlayer->HasVideo == false", L"main::openVideo", MB_OK);
 			}
 		}
-		UpdateUI(hwnd, OpenPending);
-
-
 	}
 
-}
-
-void UpdateUI(HWND hwnd, PlayerState state) {
-	BOOL bWaiting = FALSE;
-	BOOL bPlayback = FALSE;
-
-	assert(g_pPlayer != NULL);
-
-	switch (state)
-	{
-	case OpenPending:
-		bWaiting = TRUE;
-		break;
-
-	case Started:
-		bPlayback = TRUE;
-		break;
-
-	case Paused:
-		bPlayback = TRUE;
-		break;
-	}
-
-	if (bPlayback && g_pPlayer->HasVideo()) g_bRepaintClient = FALSE;
-	else g_bRepaintClient = TRUE;
 }
 
 void OnPlayerEvent(HWND hwnd, WPARAM pUnkPtr)
@@ -321,15 +236,13 @@ void OnPlayerEvent(HWND hwnd, WPARAM pUnkPtr)
 	const bool debug = false;
 	//this function actually initiates playback
 
-
-	HRESULT hr = g_pPlayer->HandleEvent(pUnkPtr);
+	HRESULT hr = g_pPlayer->HandleEvent(pUnkPtr); //Playback starts
 	ShowWindow(hwnd, SW_NORMAL);
 	windowToTop(hwnd);
 	if (FAILED(hr))
 	{
 		if (debug) MessageBox(NULL, L"g_pPlayer->HandleEvent The badness!!!", L"main::OnPlayerEvent", MB_OK);
 	}
-	UpdateUI(hwnd, g_pPlayer->GetState());
 
 	if (g_pPlayer->GetState() == Started) {
 		videoHasStarted = true;
@@ -347,8 +260,7 @@ LRESULT OnCreateWindow(HWND hwnd) {
 	hr = CPlayer::CreateInstance(hwnd, hwnd, &g_pPlayer, globalW, globalH); //initialize the player
 	if (SUCCEEDED(hr)) {
 		if (debug) MessageBox(NULL, L"CPlayer::CreateInstance worked!!!", L"main::OnCreateWindow", MB_OK);
-		openVideo(hwnd);
-		
+		openVideo(hwnd); //The WM_APP_PLAYER_EVENT event that initiates playback is posted
 
 		return 0;
 	}

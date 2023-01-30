@@ -1,6 +1,6 @@
 ﻿/*
-confettidraw.cpp, copyright Chris/abstractedfox 2022. 
-Launcher for CrashConfetti.exe; starts the program when all instances of Windows Explorer exit.
+ConfettiCannon, copyright Chris/abstractedfox 2022. 
+Launcher for CrashConfetti.exe; starts the exe when all instances of Windows Explorer exit.
 
 This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -39,7 +39,6 @@ else
     return 1;
 }
 
-
 GetExplorerProc();
 
 WatchExplorer();
@@ -77,7 +76,7 @@ bool GetExplorerProc()
         }
         catch (Win32Exception)
         {
-            //Some processes don't like to be looked at and will cause an exception, so ignore those
+            //Some processes don't like to be looked at and will throw an exception, so ignore those
         }
     }
     if (explorerProcesses.Count > 0) return true;
@@ -107,7 +106,6 @@ async void WatchExplorer()
                 while (!GetExplorerProc()) ; //Block until explorer restarts
                 explorerAlive = true;
             }
-            //else Console.WriteLine("Explorer moment");
         }
     });
 }
